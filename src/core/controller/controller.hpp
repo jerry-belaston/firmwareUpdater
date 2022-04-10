@@ -2,6 +2,11 @@
 
 #include <memory>
 
+namespace firmwareUpdater::core::model
+{
+class Server;
+}
+
 namespace firmwareUpdater::core::controller
 {
 
@@ -15,7 +20,7 @@ public:
 	using UniquePointer = std::unique_ptr<Controller>;
 
 	// Construction
-	static UniquePointer create();
+	static UniquePointer create(model::Server& server);
 	virtual ~Controller();
 
 	// View initialization
@@ -36,7 +41,7 @@ public:
 
 private:
 	// Constructor disabled (use create)
-	Controller();
+	Controller(model::Server& server);
 
 private:
 	class PImpl;

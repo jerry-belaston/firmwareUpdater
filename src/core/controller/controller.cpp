@@ -1,9 +1,8 @@
 #include "controller.hpp"
-
+#include "viewInterface.hpp"
+#include "core/model/server.hpp"
 #include <algorithm>
 #include <cassert>
-
-#include "viewInterface.hpp"
 
 namespace firmwareUpdater::core::controller
 {
@@ -14,7 +13,7 @@ namespace firmwareUpdater::core::controller
 class Controller::PImpl
 {
 public:
-	PImpl(Controller& parent);
+	PImpl(Controller& parent, model::Server& server);
 	virtual ~PImpl() = default;
 	void setCurrentView(MainViewInterface::ViewType const viewType);
 
@@ -24,6 +23,7 @@ public:
 	Controller& _parent;
 
 	// Model
+	model::Server& _server;
 	type::TemplateInfoList _templateInfoList;
 	MainViewInterface::ViewType _currentViewType{ MainViewInterface::ViewType::Welcome };
 
@@ -36,10 +36,15 @@ public:
 	TemplateBrowserViewInterface* _templateBrowserView{ nullptr };
 	std::unique_ptr<TemplateInfoViewInterface> _dummyTemplateInfoView;
 	TemplateInfoViewInterface* _templateInfoView{ nullptr };
+
+public:
+	// server callback
+	void onTemplateInfoListChanged(type::TemplateInfoList const& templateInfoList);
 };
 
-Controller::PImpl::PImpl(Controller& parent)
+Controller::PImpl::PImpl(Controller& parent, model::Server& server)
 	: _parent{ parent }
+	, _server{ server }
 	, _dummyMainView{ std::make_unique<MainViewInterface>() }
 	, _mainView{ _dummyMainView.get() }
 	, _dummyWelcomeView{ std::make_unique<WelcomeViewInterface>() }
@@ -66,51 +71,41 @@ type::TemplateNameList Controller::PImpl::toTemplateNameList(type::TemplateInfoL
 	return templateNameList;
 }
 
+void Controller::PImpl::onTemplateInfoListChanged(type::TemplateInfoList const& templateInfoList)
+{
+	_templateInfoList = templateInfoList;
+	_templateBrowserView->setTemplateNameList(toTemplateNameList(templateInfoList));
+
+	// Force template list view
+	if(templateInfoList.empty())
+	{
+		_welcomeView->setButtonEnabled(false);
+		setCurrentView(MainViewInterface::ViewType::Welcome);
+	}
+	else
+	{
+		_welcomeView->setButtonEnabled(true);
+		if (_currentViewType != MainViewInterface::ViewType::Welcome)
+			setCurrentView(MainViewInterface::ViewType::TemplateList);
+	}
+}
+
 //////////////////////////////////////////////////////////////////////////////////////////////////
 // Controller
 //////////////////////////////////////////////////////////////////////////////////////////////////
 
-Controller::UniquePointer Controller::create()
+Controller::UniquePointer Controller::create(model::Server& server)
 {
-	return UniquePointer(new Controller());
+	return UniquePointer(new Controller(server));
 }
 
-Controller::Controller()
-	: _pImpl(std::make_unique<PImpl>(*this))
+Controller::Controller(model::Server& server)
+	: _pImpl(std::make_unique<PImpl>(*this, server))
 {
-	// TO REMOVE: Fake template info list just for test
-	_pImpl->_templateInfoList = type::TemplateInfoList(3, {
-		.name = "Template",
-		.stepInfoList = {
-			{
-				.imageUrl = "https://d3kqkuy1hpjocx.cloudfront.net/s3fs-public/styles/thumbnail/public/pictures/picture-134773-1541674067.jpg",
-					.descriptionText = "First step",
-					.descriptionColor = "black", // Format #RRGGBB or standard color name text
-					.descriptionSize = 8, // in pt
-					.previousButtonText = "Previous",
-					.previousButtonDisplayed = true,
-					.nextButtonText = "Next",
-			},
-			{
-				.imageUrl = "https://upload.wikimedia.org/wikipedia/commons/5/54/Light_shining1.JPG",
-				.descriptionText = "Second step which must be used with attention",
-				.descriptionColor = "blue", // Format #RRGGBB or standard color name text
-				.descriptionSize = 20, // in pt
-				.previousButtonText = "Previous",
-				.previousButtonDisplayed = true,
-				.nextButtonText = "Next",
-			},
-			{
-				.imageUrl = "https://www.webstickersmuraux.com/fr/img/asmu071-png/folder/products-detalle-png/autocollants-homer-simpson-reggae-.png",
-				.descriptionText = "Last and funny step.",
-				.descriptionColor = "red", // Format #RRGGBB or standard color name text
-				.descriptionSize = 8, // in pt
-				.previousButtonText = "Previous",
-				.previousButtonDisplayed = false,
-				.nextButtonText = "Next",
-			},
-		}
-	});
+	_pImpl->_server.setTemplateInfoListChangeHandler([this] (type::TemplateInfoList const& templateInfoList)
+		{ 
+			_pImpl->onTemplateInfoListChanged(templateInfoList);
+		});
 }
 
 Controller::~Controller()

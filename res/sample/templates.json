@@ -1,0 +1,110 @@
+{
+    "templates": [
+        {
+            "name": "Default",
+            "steps": [
+                {
+                    "button_next": {
+                        "text": "Next"
+                    },
+                    "button_previous": {
+                        "displayed": true,
+                        "text": "Previous"
+                    },
+                    "description": {
+                        "color": "black",
+                        "size": 11,
+                        "text": "First step"
+                    },
+                    "image_url": "https://d3kqkuy1hpjocx.cloudfront.net/s3fs-public/styles/thumbnail/public/pictures/picture-134773-1541674067.jpg"
+                },
+                {
+                    "button_next": {
+                        "text": "Next"
+                    },
+                    "button_previous": {
+                        "displayed": true,
+                        "text": "Previous"
+                    },
+                    "description": {
+                        "color": "blue",
+                        "size": 15,
+                        "text": "Second step"
+                    },
+                    "image_url": "https://d3kqkuy1hpjocx.cloudfront.net/s3fs-public/styles/thumbnail/public/pictures/picture-134773-1541674067.jpg"
+                },
+                {
+                    "button_next": {
+                        "text": "Next"
+                    },
+                    "button_previous": {
+                        "displayed": false,
+                        "text": "Previous"
+                    },
+                    "description": {
+                        "color": "#CC00FF",
+                        "size": 8,
+                        "text": "Third and last important step"
+                    },
+                    "image_url": "https://d3kqkuy1hpjocx.cloudfront.net/s3fs-public/styles/thumbnail/public/pictures/picture-134773-1541674067.jpg"
+                }
+            ]
+        },
+        {
+            "name": "Light",
+            "steps": [
+                {
+                    "button_next": {
+                        "text": "Next"
+                    },
+                    "button_previous": {
+                        "displayed": true,
+                        "text": "Previous"
+                    },
+                    "description": {
+                        "color": "#00FF00",
+                        "size": 8,
+                        "text": "Light: step 1"
+                    },
+                    "image_url": "https://upload.wikimedia.org/wikipedia/commons/5/54/Light_shining1.JPG"
+                },
+                {
+                    "button_next": {
+                        "text": "Next"
+                    },
+                    "button_previous": {
+                        "displayed": true,
+                        "text": "Previous"
+                    },
+                    "description": {
+                        "color": "black",
+                        "size": 8,
+                        "text": "#Light: step 2"
+                    },
+                    "image_url": "https://upload.wikimedia.org/wikipedia/commons/5/54/Light_shining1.JPG"
+                }
+            ]
+        },
+        {
+            "name": "Enjoy",
+            "steps": [
+                {
+                    "button_next": {
+                        "text": "Next"
+                    },
+                    "button_previous": {
+                        "displayed": true,
+                        "text": "Previous"
+                    },
+                    "description": {
+                        "color": "red",
+                        "size": 5,
+                        "text": "Enjoy: only one funny step"
+                    },
+                    "image_url": "https://www.webstickersmuraux.com/fr/img/asmu071-png/folder/products-detalle-png/autocollants-homer-simpson-reggae-.png"
+                }
+            ]
+        }
+    ],
+    "version": 1
+}

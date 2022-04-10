@@ -24,6 +24,11 @@ set(SOURCE_FILES
 	${CMAKE_CURRENT_SOURCE_DIR}/src/core/controller/controller.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/src/core/controller/controller.hpp
 	${CMAKE_CURRENT_SOURCE_DIR}/src/core/controller/viewInterface.hpp
+	${CMAKE_CURRENT_SOURCE_DIR}/src/core/model/private/defaultTemplates.hpp
+	${CMAKE_CURRENT_SOURCE_DIR}/src/core/model/private/templatesSerialization.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/src/core/model/private/templatesSerialization.hpp
+	${CMAKE_CURRENT_SOURCE_DIR}/src/core/model/server.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/src/core/model/server.hpp
 	${CMAKE_CURRENT_SOURCE_DIR}/src/core/toolkit/timerTask.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/src/core/toolkit/timerTask.hpp
 	${CMAKE_CURRENT_SOURCE_DIR}/src/ui/toolkit/dataDownloader.cpp

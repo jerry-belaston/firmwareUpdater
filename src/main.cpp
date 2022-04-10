@@ -3,6 +3,7 @@
 #include <QStyle>
 #include <QStyleFactory>
 
+#include "core/model/server.hpp"
 #include "core/controller/controller.hpp"
 #include "ui/view/main/mainView.hpp"
 
@@ -10,6 +11,9 @@ int main(int argc, char *argv[])
 {
 	// Create Qt application
 	QApplication application(argc, argv);
+
+	// Create model
+	auto server = firmwareUpdater::core::model::Server::create();
 
 	// Create view
 	auto mainView = firmwareUpdater::ui::view::main::MainView{};
@@ -20,13 +24,14 @@ int main(int argc, char *argv[])
 	mainView.setGeometry(QStyle::alignedRect(Qt::LeftToRight, Qt::AlignCenter, mainView.size(), QApplication::desktop()->availableGeometry()));
 
 	// Create controller
-	auto controller = firmwareUpdater::core::controller::Controller::create();
+	auto controller = firmwareUpdater::core::controller::Controller::create(*server);
 
-	// Set view
+	// Set view and start server model
 	controller->setView(mainView);
 	controller->setView(*mainView.getWelcomeView());
 	controller->setView(*mainView.getTemplateBrowserView());
 	controller->setView(*mainView.getTemplateInfoView());
+	server->start();
 
 	// Display view
 	mainView.show();
