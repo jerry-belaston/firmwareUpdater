@@ -20,6 +20,26 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 
 # Add project source files
 set(SOURCE_FILES
+	${CMAKE_CURRENT_SOURCE_DIR}/src/core/common/type.hpp
+	${CMAKE_CURRENT_SOURCE_DIR}/src/core/controller/controller.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/src/core/controller/controller.hpp
+	${CMAKE_CURRENT_SOURCE_DIR}/src/core/controller/viewInterface.hpp
+	${CMAKE_CURRENT_SOURCE_DIR}/src/core/toolkit/timerTask.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/src/core/toolkit/timerTask.hpp
+	${CMAKE_CURRENT_SOURCE_DIR}/src/ui/toolkit/dataDownloader.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/src/ui/toolkit/dataDownloader.hpp
+	${CMAKE_CURRENT_SOURCE_DIR}/src/ui/toolkit/stepperWidget.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/src/ui/toolkit/stepperWidget.hpp
+	${CMAKE_CURRENT_SOURCE_DIR}/src/ui/view/main/mainView.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/src/ui/view/main/mainView.hpp
+	${CMAKE_CURRENT_SOURCE_DIR}/src/ui/view/templateBrowser/templateBrowserView.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/src/ui/view/templateBrowser/templateBrowserView.hpp
+	${CMAKE_CURRENT_SOURCE_DIR}/src/ui/view/templateInfo/templateInfoView.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/src/ui/view/templateInfo/templateInfoView.hpp
+	${CMAKE_CURRENT_SOURCE_DIR}/src/ui/view/templateInfo/templateStepView.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/src/ui/view/templateInfo/templateStepView.hpp
+	${CMAKE_CURRENT_SOURCE_DIR}/src/ui/view/welcome/welcomeView.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/src/ui/view/welcome/welcomeView.hpp
 	${CMAKE_CURRENT_SOURCE_DIR}/src/main.cpp
 )
 commonQt_source_group("${SOURCE_FILES}" GENERATED_UI_HPP_FILES GENERATED_HPP_CPPMOC_FILES)

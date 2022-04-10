@@ -96,4 +96,13 @@ macro(commonQt_target_link PROJECT_NAME)
 			endforeach()
 		endif()
 	endforeach()
+
+    # Setup Openssl needed for network requests.
+    # Note that OpenSSL can be installed as an optional Qt component
+    # by selecting "OpenSSL Toolkit".
+    if(NOT OPENSSL_ROOT_DIR)
+        # Set default required openssl root dir if not provided
+        set(OPENSSL_ROOT_DIR "C:/Qt/Tools/OpenSSL/Win_x86")
+    endif()
+	common_setup_openssl(${PROJECT_NAME})
 endmacro()
