@@ -5,4 +5,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
 ## [Unreleased]
 ### Added
-- First public version
+
+## [1.0.0] - 2022-04-11
+### Added
+- First public Windows version

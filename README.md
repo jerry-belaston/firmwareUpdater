@@ -30,6 +30,8 @@ Licensed under the MIT license. Read the [LICENSE](LICENSE) file for details.
 
 ## ▶️ Precompiled binaries
 
+Precompiled binaries can be found [here](https://github.com/jerry-belaston/firmwareUpdater/releases).
+
 ## ⚙️ Build and Installation
 
 Follow the ["Quick user build and installation"](doc/installation.md) guide to bootstrap the firmwareUpdater environment.
