@@ -3,3 +3,33 @@
 
 # Ignore macOS files
 .DS_Store
+
+# Ignore QtCreator files
+.qmake.cache
+.qmake.stash
+*.creator.user*
+*.pro.user*
+*.pyqtc.user*
+*.qbs.user*
+*.qmlproject.user*
+CMakeLists.txt.user*
+/share/qtcreator/examples/
+/share/qtcreator/externaltools/
+/share/qtcreator/fonts/
+/share/qtcreator/generic-highlighter/
+/share/qtcreator/qmldesigner/QtProject/
+/src/app/Info.plist
+/src/plugins/**/*.json
+/src/plugins/coreplugin/ide_version.h
+/src/libs/qt-breakpad/bin
+/.cmake/
+app_version.h
+phony.c
+
+# Ignore data files
+*.json
+
+# Ignore build folders
+/[Dd]ebug*/
+/[Rr]elease*/
+MakeFile*

@@ -21,3 +21,17 @@ Prerequisite:
 - Open `.sln` generated solution with Visual Studio.
 - Select `Debug` or `Release` configuration.
 - Build and run the `firmwareUpdater` default target: you are done.
+
+## Windows with Qt Creator
+
+- Install [Qt](https://doc.qt.io/qt-5/gettingstarted.html) using the online installer (which requires signing into a Qt Account). Make sure to select during the installation the following components:
+    - MSVC compiler version 32bit and/or 64bit
+    - OpenSSL Toolkit (32 or/and 64bit)
+    - Qt Debugging Tools
+    - Qt Creator
+    - Qt Creator CDB Debugger Support
+- Clone this repository.
+- Open `firmwareUpdater.pro` project with Qt Creator.
+- In the "Configure Project", select MSVC compiler kit and click "configure".
+- Select `Debug` or `Release` configuration.
+- Build and Run project. You are done!
