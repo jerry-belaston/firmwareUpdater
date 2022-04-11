@@ -22,8 +22,6 @@ If any change occurs in the JSON templates file:
 - we fallback to Screen 1, with the Start button disabled, if there is no valid template anymore.
 - we fallback to Screen 2 if we were in Screen 3.
 
-**Warning:** only Windows platform is addressed for now. MacOS will be supported very soon.
-
 ## 🔑 License
 
 Licensed under the MIT license. Read the [LICENSE](LICENSE) file for details.

@@ -35,3 +35,18 @@ Prerequisite:
 - In the "Configure Project", select MSVC compiler kit and click "configure".
 - Select `Debug` or `Release` configuration.
 - Build and Run project. You are done!
+
+## MacOS with Qt Creator
+
+- Install [Xcode](https://developer.apple.com/xcode/) which will bring Clang compiler
+- Install [Qt](https://doc.qt.io/qt-5/gettingstarted.html) using the online installer (which requires signing into a Qt Account). Make sure to select during the installation the following components:
+    - MacOS
+    - OpenSSL Toolkit (32 or/and 64bit)
+    - Qt Debugging Tools
+    - Qt Creator
+    - Qt Creator CDB Debugger Support
+- Clone this repository.
+- Open `firmwareUpdater.pro` project with Qt Creator.
+- In the "Configure Project", select Clang compiler kit and click "configure".
+- Select `Debug` or `Release` configuration.
+- Build and Run project. You are done!
