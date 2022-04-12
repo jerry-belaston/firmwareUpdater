@@ -4,6 +4,7 @@
 #include "private/defaultTemplates.hpp"
 
 #include <QDir>
+#include <QCoreApplication>
 #include <QJsonDocument>
 
 auto constexpr TemplatesFileName{ "templates.json" };
@@ -70,7 +71,9 @@ void Server::PImpl::retrieveTemplatesIfChanged()
 
 QFile Server::PImpl::getTemplatesFile()
 {
-	return QDir::currentPath() + QDir::separator() + TemplatesFileName;
+	// The templates file is closed to the application excutable, which means that,
+	// on MacOS, it is inside the bundle (into <project_name>.app/Contents/MacOS)
+	return QCoreApplication::applicationDirPath() + QDir::separator() + TemplatesFileName;
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////
