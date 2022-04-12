@@ -13,7 +13,7 @@ This application has been implemented following [MVPMV architecture](https://doc
 Here a non-exhaustive list of the main implemented features:
 - The mock server is a simple thread which watches the working directory every 2 sec for JSON templates file change.
 - A template (from JSON templates file) is considered valid if it contains at least one step.
-- Only when starting, the application saved a default JSON templates file in the working directory if no one exists.
+- Only when starting, the application saves a default JSON templates file in the working directory if no one exists.
 - Welcome Screen 1 only show a Start button enabled only if at least one template is valid. Clicking on the button redirects to Screen 2.
 - Template Browser Screen 2 allows to choose between the different templates retrieved from the mock server. Clicking on a template redirects to Screen 3.
 - Stepper Screen 3 displays the update process and steps info containing in the template. The first previous button and the last next one redirects to Screen 2. Note that if the template contain only one step, the step bar is not displayed.
