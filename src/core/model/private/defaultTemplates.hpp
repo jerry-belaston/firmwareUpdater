@@ -43,21 +43,21 @@ auto const DefaultTemplateInfoList = type::TemplateInfoList
 		}
 	},
 	{
-		.name = "Light",
+		.name = "Airy",
 		.stepInfoList = type::TemplateInfo::StepInfoList
 		{
 			{
-				.imageUrl = "https://upload.wikimedia.org/wikipedia/commons/5/54/Light_shining1.JPG",
-				.descriptionText = "Light: step 1",
+				.imageUrl = "https://www.gstatic.com/webp/gallery/1.png",
+				.descriptionText = "Airy: step 1",
 				.descriptionColor = "#00FF00",
-				.descriptionSize = 10,
+				.descriptionSize = 12,
 				.previousButtonText = "Previous",
 				.previousButtonDisplayed = false,
 				.nextButtonText = "Next",
 			},
 			{
-				.imageUrl = "https://upload.wikimedia.org/wikipedia/commons/5/54/Light_shining1.JPG",
-				.descriptionText = "#Light: step 2",
+				.imageUrl = "https://www.gstatic.com/webp/gallery/4.png",
+				.descriptionText = "#Airy: step 2",
 				.descriptionColor = "black",
 				.descriptionSize = 10,
 				.previousButtonText = "Previous",
@@ -74,7 +74,7 @@ auto const DefaultTemplateInfoList = type::TemplateInfoList
 				.imageUrl = "https://www.webstickersmuraux.com/fr/img/asmu071-png/folder/products-detalle-png/autocollants-homer-simpson-reggae-.png",
 				.descriptionText = "Enjoy: only one funny step",
 				.descriptionColor = "red",
-				.descriptionSize = 5,
+				.descriptionSize = 8,
 				.previousButtonText = "Previous",
 				.previousButtonDisplayed = true,
 				.nextButtonText = "Next",
