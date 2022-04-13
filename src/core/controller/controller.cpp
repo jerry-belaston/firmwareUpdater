@@ -16,8 +16,7 @@ public:
 	PImpl(Controller& parent, model::Server& server);
 	virtual ~PImpl() = default;
 	void setCurrentView(MainViewInterface::ViewType const viewType);
-
-	static type::TemplateNameList toTemplateNameList(type::TemplateInfoList const& templateInfoList);
+	void updateTemplateInfoListCache(type::TemplateInfoList const& templateInfoList);
 
 	// Members
 	Controller& _parent;
@@ -25,6 +24,7 @@ public:
 	// Model
 	model::Server& _server;
 	type::TemplateInfoList _templateInfoList;
+	type::TemplateNameList _templateNameList;
 	MainViewInterface::ViewType _currentViewType{ MainViewInterface::ViewType::Welcome };
 
 	// View
@@ -63,19 +63,20 @@ void Controller::PImpl::setCurrentView(MainViewInterface::ViewType const current
 	_mainView->setCurrentView(currentViewType);
 }
 
-type::TemplateNameList Controller::PImpl::toTemplateNameList(type::TemplateInfoList const& templateInfoList)
+void Controller::PImpl::updateTemplateInfoListCache(type::TemplateInfoList const& templateInfoList)
 {
-	auto templateNameList = type::TemplateNameList(templateInfoList.size());
-	for (auto i = 0u; i < templateInfoList.size(); ++i)
-		templateNameList[i] = templateInfoList[i].name;
-	return templateNameList;
+	_templateInfoList = templateInfoList;
+	_templateNameList.clear();
+	for (auto const& templateInfo : templateInfoList)
+	{
+		_templateNameList.push_back(templateInfo.name);
+	}
 }
 
 void Controller::PImpl::onTemplateInfoListChanged(type::TemplateInfoList const& templateInfoList)
 {
-	_templateInfoList = templateInfoList;
-	_templateBrowserView->setTemplateNameList(toTemplateNameList(templateInfoList));
-
+	updateTemplateInfoListCache(templateInfoList);
+	_templateBrowserView->setTemplateNameList(_templateNameList);
 	// Force template list view
 	if(templateInfoList.empty())
 	{
@@ -132,7 +133,7 @@ void Controller::setView(TemplateBrowserViewInterface& templateBrowserViewInterf
 {
 	_pImpl->_templateBrowserView = &templateBrowserViewInterface;
 	_pImpl->_templateBrowserView->setController(*this);
-	_pImpl->_templateBrowserView->setTemplateNameList(_pImpl->toTemplateNameList(_pImpl->_templateInfoList));
+	_pImpl->_templateBrowserView->setTemplateNameList(_pImpl->_templateNameList);
 }
 
 
