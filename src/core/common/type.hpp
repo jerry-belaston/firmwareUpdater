@@ -21,27 +21,12 @@ struct TemplateInfo
 		bool previousButtonDisplayed{ true };
 		std::string nextButtonText{ "Next" };
 
-		bool operator==(const StepInfo& other) const noexcept
-		{
-			return
-				imageUrl == other.imageUrl &&
-				descriptionText == other.descriptionText &&
-				descriptionColor == other.descriptionColor &&
-				descriptionSize == other.descriptionSize &&
-				previousButtonText == other.previousButtonText &&
-				previousButtonDisplayed == other.previousButtonDisplayed &&
-				nextButtonText == other.nextButtonText;
-		}
+		bool operator==(const StepInfo& other) const = default;
 	};
 	using StepInfoList = std::vector<StepInfo>;
 	StepInfoList stepInfoList;
 
-	bool operator==(const TemplateInfo& other) const noexcept
-	{
-		return
-			name == other.name &&
-			stepInfoList == other.stepInfoList;
-	}
+	bool operator==(const TemplateInfo& other) const = default;
 };
 
 using TemplateInfoList = std::vector<TemplateInfo>;
