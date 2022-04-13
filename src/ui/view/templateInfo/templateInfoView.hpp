@@ -19,7 +19,7 @@ public:
 
 	// ViewInterface overrides
 	void setController(core::controller::Controller& controller) override;
-	void setStepInfoList(core::type::TemplateInfo::StepInfoList const& stepInfoList) override;
+	void setTemplateInfo(core::type::TemplateInfo const& templateInfo) override;
 
 private:
 	// Widgets

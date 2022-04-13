@@ -140,7 +140,7 @@ void Controller::setView(TemplateInfoViewInterface& templateInfoViewInterface)
 {
 	_pImpl->_templateInfoView = &templateInfoViewInterface;
 	_pImpl->_templateInfoView->setController(*this);
-	_pImpl->_templateInfoView->setStepInfoList({});
+	_pImpl->_templateInfoView->setTemplateInfo({});
 }
 
 void Controller::onStartButtonClicked()
@@ -151,7 +151,7 @@ void Controller::onStartButtonClicked()
 void Controller::onListItemClicked(std::uint32_t const itemIndex)
 {
 	assert(itemIndex < _pImpl->_templateInfoList.size());
-	_pImpl->_templateInfoView->setStepInfoList(_pImpl->_templateInfoList[itemIndex].stepInfoList);
+	_pImpl->_templateInfoView->setTemplateInfo(_pImpl->_templateInfoList[itemIndex]);
 	_pImpl->setCurrentView(MainViewInterface::ViewType::Stepper);
 }
 

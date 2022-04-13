@@ -32,12 +32,12 @@ void TemplateInfoView::setController(core::controller::Controller& controller)
 	_controller = &controller;
 }
 
-void TemplateInfoView::setStepInfoList(core::type::TemplateInfo::StepInfoList const& stepInfoList)
+void TemplateInfoView::setTemplateInfo(core::type::TemplateInfo const& templateInfo)
 {
-	QMetaObject::invokeMethod(this, [this, stepInfoList]
+	QMetaObject::invokeMethod(this, [this, templateInfo]
 	{
 		_stepperWidget.clear();
-		for (auto const& stepInfo : stepInfoList)
+		for (auto const& stepInfo : templateInfo.stepInfoList)
 			_stepperWidget.addStep(new TemplateStepView{ stepInfo, this });
 	}, Qt::QueuedConnection);
 
