@@ -9,7 +9,7 @@
 namespace firmwareUpdater::ui::view::templateInfo
 {
 
-TemplateStepView::TemplateStepView(core::type::TemplateInfo::StepInfo const& stepInfo, QWidget* parent)
+TemplateStepView::TemplateStepView(core::type::TemplateInfo::StepInfo const& stepInfo, toolkit::DataDownloader& dataDownloader, QWidget* parent)
 	: toolkit::StepWidget{ parent }
 {
     // Gird layout custom
@@ -28,8 +28,7 @@ TemplateStepView::TemplateStepView(core::type::TemplateInfo::StepInfo const& ste
     _imageLabel.wordWrap();
     _imageLabel.setAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
     gridLayout->addWidget(&_imageLabel, 0, 0);
-    auto* dataDownloader = new toolkit::DataDownloader(QString::fromStdString(stepInfo.imageUrl), this);
-    connect(dataDownloader, &toolkit::DataDownloader::downloaded, this, [this](auto const data)
+    connect(&dataDownloader, &toolkit::DataDownloader::downloaded, this, [this](auto const data)
     {
         _pixmap.loadFromData(data);
         resizeEvent(nullptr);

@@ -1,13 +1,22 @@
 #include "templateInfoView.hpp"
 #include "templateStepView.hpp"	
-
+#include "ui/toolkit/dataDownloader.hpp"
+#include <unordered_map>
 #include <QVBoxLayout>
 
 namespace firmwareUpdater::ui::view::templateInfo
 {
 
+class TemplateInfoView::ImageCache
+{
+public:
+	using StepId = std::uint32_t;
+	std::unordered_map<StepId, std::unique_ptr<toolkit::DataDownloader>> _dataDownloaders;
+};
+
 TemplateInfoView::TemplateInfoView(QWidget* parent)
 	: QWidget{ parent }
+	, _imageCache{ std::make_unique<ImageCache>() }
 {
 	// Layout
 	auto* layout = new QVBoxLayout{ this };
@@ -27,6 +36,10 @@ TemplateInfoView::TemplateInfoView(QWidget* parent)
 	});
 }
 
+TemplateInfoView::~TemplateInfoView()
+{
+}
+
 void TemplateInfoView::setController(core::controller::Controller& controller)
 {
 	_controller = &controller;
@@ -36,11 +49,13 @@ void TemplateInfoView::setTemplateInfo(core::type::TemplateInfo const& templateI
 {
 	QMetaObject::invokeMethod(this, [this, templateInfo]
 	{
+		_imageCache->_dataDownloaders.clear();
 		_stepperWidget.clear();
 		for (auto i = 0u; i < templateInfo.stepInfoList.size(); ++i)
 		{
 			auto const& stepInfo = templateInfo.stepInfoList[i];
-			_stepperWidget.addStep(new TemplateStepView{ stepInfo, this });
+			_imageCache->_dataDownloaders[i] = std::make_unique<toolkit::DataDownloader>(QString::fromStdString(stepInfo.imageUrl), this);
+			_stepperWidget.addStep(new TemplateStepView{ stepInfo, *_imageCache->_dataDownloaders[i], this });
 		}
 	}, Qt::QueuedConnection);
 

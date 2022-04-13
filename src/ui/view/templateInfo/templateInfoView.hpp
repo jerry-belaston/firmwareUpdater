@@ -16,6 +16,7 @@ class TemplateInfoView
 
 public:
 	explicit TemplateInfoView(QWidget* parent = nullptr);
+	virtual ~TemplateInfoView();
 
 	// ViewInterface overrides
 	void setController(core::controller::Controller& controller) override;
@@ -27,6 +28,9 @@ private:
 
 	// Controller
 	core::controller::Controller* _controller{ nullptr };
+
+	class ImageCache;
+	std::unique_ptr<ImageCache> _imageCache{};
 };
 
 } // namespace firmwareUpdater::ui::view::templateInfo

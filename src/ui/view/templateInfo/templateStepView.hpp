@@ -7,6 +7,11 @@
 #include "ui/toolkit/stepperWidget.hpp"
 #include "core/common/type.hpp"
 
+namespace firmwareUpdater::ui::toolkit
+{
+	class DataDownloader;
+}
+
 namespace firmwareUpdater::ui::view::templateInfo
 {
 
@@ -16,7 +21,7 @@ class TemplateStepView
 	Q_OBJECT
 
 public:
-	explicit TemplateStepView(core::type::TemplateInfo::StepInfo const& stepInfo, QWidget* parent = nullptr);
+	explicit TemplateStepView(core::type::TemplateInfo::StepInfo const& stepInfo, toolkit::DataDownloader& dataDownloader, QWidget* parent = nullptr);
 	void resizeEvent(QResizeEvent*) override;
 
 private:
