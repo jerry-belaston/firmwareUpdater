@@ -1,4 +1,4 @@
-	#pragma once
+#pragma once
 
 #include "core/common/type.hpp"
 #include "controller.hpp"
@@ -21,25 +21,25 @@ public:
 		TemplateList,
 		Stepper,
 	};
-	virtual void setCurrentView(ViewType const viewType) {};
+	virtual void setCurrentView(ViewType const viewType) {}
 };
 
 class WelcomeViewInterface : public ViewInterface
 {
 public:
-	virtual void setButtonEnabled(bool isEnabled) {};
+	virtual void setButtonEnabled(bool isEnabled) {}
 };
 
 class TemplateBrowserViewInterface : public ViewInterface
 {
 public:
-	virtual void setTemplateNameList(type::TemplateNameList const& templateNameList) {};
+	virtual void setTemplateNameList(type::TemplateNameList const& templateNameList) {}
 };
 
 class TemplateInfoViewInterface : public ViewInterface
 {
 public:
-	virtual void setStepInfoList(type::TemplateInfo::StepInfoList const& stepInfoList) {};
+	virtual void setStepInfoList(type::TemplateInfo::StepInfoList const& stepInfoList) {}
 };
 
 } // namespace firmwareUpdater::core::controller

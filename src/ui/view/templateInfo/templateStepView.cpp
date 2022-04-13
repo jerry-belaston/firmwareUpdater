@@ -5,7 +5,6 @@
 #include <QGridLayout>
 #include <QPushButton>
 #include <QTextEdit>
-#include <QNetworkAccessManager>
 
 namespace firmwareUpdater::ui::view::templateInfo
 {
