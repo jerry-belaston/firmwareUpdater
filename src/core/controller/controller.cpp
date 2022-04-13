@@ -152,7 +152,7 @@ void Controller::onListItemClicked(std::uint32_t const itemIndex)
 {
 	assert(itemIndex < _pImpl->_templateInfoList.size());
 	_pImpl->_templateInfoView->setTemplateInfo(_pImpl->_templateInfoList[itemIndex]);
-	_pImpl->setCurrentView(MainViewInterface::ViewType::Stepper);
+	_pImpl->setCurrentView(MainViewInterface::ViewType::TemplateInfo);
 }
 
 void Controller::onStepsEnded()

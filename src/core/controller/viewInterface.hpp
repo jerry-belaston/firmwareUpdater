@@ -19,7 +19,7 @@ public:
 	{
 		Welcome,
 		TemplateList,
-		Stepper,
+		TemplateInfo,
 	};
 	virtual void setCurrentView(ViewType const viewType) {}
 };
