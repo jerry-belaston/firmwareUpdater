@@ -45,9 +45,9 @@ void TemplateInfoView::setController(core::controller::Controller& controller)
 	_controller = &controller;
 }
 
-void TemplateInfoView::setTemplateInfo(core::type::TemplateInfo const& templateInfo)
+void TemplateInfoView::setTemplateInfo(std::uint32_t const templateIndex, core::type::TemplateInfo const& templateInfo)
 {
-	QMetaObject::invokeMethod(this, [this, templateInfo]
+	QMetaObject::invokeMethod(this, [this, templateIndex, templateInfo]
 	{
 		_imageCache->_dataDownloaders.clear();
 		_stepperWidget.clear();

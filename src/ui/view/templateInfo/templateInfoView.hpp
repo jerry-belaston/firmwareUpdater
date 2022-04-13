@@ -20,7 +20,7 @@ public:
 
 	// ViewInterface overrides
 	void setController(core::controller::Controller& controller) override;
-	void setTemplateInfo(core::type::TemplateInfo const& templateInfo) override;
+	void setTemplateInfo(std::uint32_t const templateIndex, core::type::TemplateInfo const& templateInfo) override;
 
 private:
 	// Widgets

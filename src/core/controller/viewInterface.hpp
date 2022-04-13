@@ -39,7 +39,7 @@ public:
 class TemplateInfoViewInterface : public ViewInterface
 {
 public:
-	virtual void setTemplateInfo(type::TemplateInfo const& templateInfo) {}
+	virtual void setTemplateInfo(std::uint32_t const templateIndex, type::TemplateInfo const& templateInfo) {}
 };
 
 } // namespace firmwareUpdater::core::controller
