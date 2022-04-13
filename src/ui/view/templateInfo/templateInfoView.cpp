@@ -1,7 +1,7 @@
 #include "templateInfoView.hpp"
 #include "templateStepView.hpp"	
 #include "ui/toolkit/dataDownloader.hpp"
-#include <unordered_map>
+#include <map>
 #include <QVBoxLayout>
 
 namespace firmwareUpdater::ui::view::templateInfo
@@ -10,8 +10,8 @@ namespace firmwareUpdater::ui::view::templateInfo
 class TemplateInfoView::ImageCache
 {
 public:
-	using StepId = std::uint32_t;
-	std::unordered_map<StepId, std::unique_ptr<toolkit::DataDownloader>> _dataDownloaders;
+	using Key = std::pair<std::uint32_t, std::uint32_t>;
+	std::map<Key, std::unique_ptr<toolkit::DataDownloader>> _dataDownloaders;
 };
 
 TemplateInfoView::TemplateInfoView(QWidget* parent)
@@ -45,17 +45,32 @@ void TemplateInfoView::setController(core::controller::Controller& controller)
 	_controller = &controller;
 }
 
+void TemplateInfoView::prepareImageCache(core::type::TemplateInfoList const& templateInfoList)
+{
+	QMetaObject::invokeMethod(this, [this, templateInfoList]
+	{
+		_imageCache->_dataDownloaders.clear();
+		for (auto i = 0u; i < templateInfoList.size(); ++i)
+		{
+			for (auto j = 0u; j < templateInfoList[i].stepInfoList.size(); ++j)
+			{
+				_imageCache->_dataDownloaders[{ i, j }] = std::make_unique<toolkit::DataDownloader>(
+					QString::fromStdString(templateInfoList[i].stepInfoList[j].imageUrl));
+			}
+		}
+	}, Qt::QueuedConnection);
+}
+
 void TemplateInfoView::setTemplateInfo(std::uint32_t const templateIndex, core::type::TemplateInfo const& templateInfo)
 {
 	QMetaObject::invokeMethod(this, [this, templateIndex, templateInfo]
 	{
-		_imageCache->_dataDownloaders.clear();
 		_stepperWidget.clear();
 		for (auto i = 0u; i < templateInfo.stepInfoList.size(); ++i)
 		{
 			auto const& stepInfo = templateInfo.stepInfoList[i];
-			_imageCache->_dataDownloaders[i] = std::make_unique<toolkit::DataDownloader>(QString::fromStdString(stepInfo.imageUrl), this);
-			_stepperWidget.addStep(new TemplateStepView{ stepInfo, *_imageCache->_dataDownloaders[i], this });
+			_stepperWidget.addStep(new TemplateStepView{ stepInfo, 
+				*_imageCache->_dataDownloaders[{ templateIndex, i }], this });
 		}
 	}, Qt::QueuedConnection);
 

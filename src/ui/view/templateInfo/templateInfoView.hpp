@@ -20,6 +20,7 @@ public:
 
 	// ViewInterface overrides
 	void setController(core::controller::Controller& controller) override;
+	void prepareImageCache(core::type::TemplateInfoList const& templateInfoList) override;
 	void setTemplateInfo(std::uint32_t const templateIndex, core::type::TemplateInfo const& templateInfo) override;
 
 private:
