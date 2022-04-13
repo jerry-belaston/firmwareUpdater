@@ -39,6 +39,8 @@ public:
 class TemplateInfoViewInterface : public ViewInterface
 {
 public:
+	// TO FIX: Here by simplicity we send all the model but we should not
+	virtual void prepareImageCache(type::TemplateInfoList const& templateInfoList) {}
 	virtual void setTemplateInfo(std::uint32_t const templateIndex, type::TemplateInfo const& templateInfo) {}
 };
 

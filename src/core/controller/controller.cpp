@@ -77,6 +77,7 @@ void Controller::PImpl::onTemplateInfoListChanged(type::TemplateInfoList const& 
 {
 	updateTemplateInfoListCache(templateInfoList);
 	_templateBrowserView->setTemplateNameList(_templateNameList);
+	_templateInfoView->prepareImageCache(_templateInfoList);
 	// Force template list view
 	if(templateInfoList.empty())
 	{
