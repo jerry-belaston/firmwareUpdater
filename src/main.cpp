@@ -17,7 +17,7 @@ int main(int argc, char *argv[])
 
 	// Create view
 	auto mainView = firmwareUpdater::ui::view::main::MainView{};
-	mainView.setWindowTitle("Firmware Updater 1.0.1");
+	mainView.setWindowTitle("Firmware Updater 1.0.2");
 	auto const availableGeometry = QApplication::desktop()->availableGeometry(&mainView);
 	auto const newWidth = availableGeometry.width() / 3.f;
 	mainView.setFixedSize(newWidth, newWidth * 1.1f);
