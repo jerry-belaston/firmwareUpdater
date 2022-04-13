@@ -1,5 +1,5 @@
 #include "templateInfoView.hpp"
-#include "templateStepView.hpp"
+#include "templateStepView.hpp"	
 
 #include <QVBoxLayout>
 
@@ -37,8 +37,11 @@ void TemplateInfoView::setTemplateInfo(core::type::TemplateInfo const& templateI
 	QMetaObject::invokeMethod(this, [this, templateInfo]
 	{
 		_stepperWidget.clear();
-		for (auto const& stepInfo : templateInfo.stepInfoList)
+		for (auto i = 0u; i < templateInfo.stepInfoList.size(); ++i)
+		{
+			auto const& stepInfo = templateInfo.stepInfoList[i];
 			_stepperWidget.addStep(new TemplateStepView{ stepInfo, this });
+		}
 	}, Qt::QueuedConnection);
 
 }
