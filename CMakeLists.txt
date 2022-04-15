@@ -12,7 +12,7 @@ project(firmwareUpdater VERSION 1.0.0 LANGUAGES CXX)
 
 # Setup Qt project
 set(QT_PACKAGE_NAME "Qt${QT_PACKAGE_VERSION_MAJOR}")
-set(QT_MODULES "Core;Gui;Multimedia;MultimediaWidgets;Network;OpenGL;Widgets")
+set(QT_MODULES "Core;Gui;Network;Widgets")
 commonQt_setup_qt(${QT_PACKAGE_NAME} "${QT_MODULES}")
 
 # Set project flags
