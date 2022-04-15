@@ -11,7 +11,9 @@ include(commonQt)
 project(firmwareUpdater VERSION 1.0.0 LANGUAGES CXX)
 
 # Setup Qt project
-commonQt_setup_qt()
+set(QT_PACKAGE_NAME "Qt${QT_PACKAGE_VERSION_MAJOR}")
+set(QT_MODULES "Core;Gui;Multimedia;MultimediaWidgets;Network;OpenGL;Widgets")
+commonQt_setup_qt(${QT_PACKAGE_NAME} "${QT_MODULES}")
 
 # Set project flags
 set(CMAKE_CXX_STANDARD 20)
@@ -77,4 +79,4 @@ target_include_directories(${CMAKE_PROJECT_NAME} PRIVATE
 set_directory_properties(PROPERTIES VS_STARTUP_PROJECT ${CMAKE_PROJECT_NAME})
 
 # Link and copy dlls
-commonQt_target_link(${PROJECT_NAME})
+commonQt_target_link(${PROJECT_NAME} ${QT_PACKAGE_NAME} "${QT_MODULES}")

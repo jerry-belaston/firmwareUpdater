@@ -19,7 +19,7 @@ macro(commonQt_source_group SOURCE_FILES GENERATED_UI_HPP_FILES GENERATED_HPP_CP
 	set(SOURCE_UI_FILES ${SOURCE_FILES})
 	list(FILTER SOURCE_UI_FILES INCLUDE REGEX ".ui$")
 	if(NOT "${SOURCE_UI_FILES}" STREQUAL "")
-		qt5_wrap_ui(${GENERATED_UI_HPP_FILES} ${SOURCE_UI_FILES})
+		qt_wrap_ui(${GENERATED_UI_HPP_FILES} ${SOURCE_UI_FILES})
 		common_source_group("Generated Files" "${${GENERATED_UI_HPP_FILES}}" "${CMAKE_CURRENT_BINARY_DIR}")
 	endif()
 
@@ -27,20 +27,20 @@ macro(commonQt_source_group SOURCE_FILES GENERATED_UI_HPP_FILES GENERATED_HPP_CP
 	set(SOURCE_HPP_FILES ${SOURCE_FILES})
 	list(FILTER SOURCE_HPP_FILES INCLUDE REGEX ".hpp$")
 	if(NOT "${SOURCE_HPP_FILES}" STREQUAL "")
-		qt5_wrap_cpp(${GENERATED_HPP_CPPMOC_FILES} ${SOURCE_HPP_FILES})
+		qt_wrap_cpp(${GENERATED_HPP_CPPMOC_FILES} ${SOURCE_HPP_FILES})
 		common_source_group("Generated Files" "${${GENERATED_HPP_CPPMOC_FILES}}" "${CMAKE_CURRENT_BINARY_DIR}/src")	
 	endif()
 endmacro()
 
 # Setup Qt
-macro(commonQt_setup_qt)
+macro(commonQt_setup_qt QT_PACKAGE_NAME QT_MODULES)
 	# Enable automatic Qt precompiler
 	set(CMAKE_AUTOMOC ON)
 	set(CMAKE_AUTORCC ON)
 	set(CMAKE_AUTOUIC ON)
-	
-	# Find Qt5 and required components
-	find_package(Qt5 COMPONENTS Core Gui Multimedia MultimediaWidgets Network OpenGL Widgets REQUIRED)
+
+	# Find Qt and required components
+	find_package(${QT_PACKAGE_NAME} COMPONENTS ${QT_MODULES} REQUIRED)
 endmacro()
 
 # Copy needed dll in the project target directory
@@ -65,44 +65,37 @@ endmacro()
 
 # Link target to libraries and copy qt dlls to executable folder
 # PROJECT_NAME Main project target name
-macro(commonQt_target_link PROJECT_NAME)
+macro(commonQt_target_link PROJECT_NAME QT_PACKAGE_NAME QT_MODULES)
 	# Link executable to needed libraries
-	target_link_libraries(${PROJECT_NAME} 
-		Qt5::Core
-		Qt5::Gui
-		Qt5::Multimedia
-		Qt5::MultimediaWidgets
-		Qt5::Network
-		Qt5::OpenGL
-		Qt5::Widgets
-	)
-	
+    foreach(QT_MODULE ${QT_MODULES})
+        target_link_libraries(${PROJECT_NAME} Qt::${QT_MODULE})
+    endforeach(QT_MODULE)
+
 	# Copy dlls
-	add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
-		COMMAND ${CMAKE_COMMAND} -E copy_if_different $<TARGET_FILE:Qt5::Core> $<TARGET_FILE_DIR:${PROJECT_NAME}>
-		COMMAND ${CMAKE_COMMAND} -E copy_if_different $<TARGET_FILE:Qt5::Gui> $<TARGET_FILE_DIR:${PROJECT_NAME}>
-		COMMAND ${CMAKE_COMMAND} -E copy_if_different $<TARGET_FILE:Qt5::Multimedia> $<TARGET_FILE_DIR:${PROJECT_NAME}>
-		COMMAND ${CMAKE_COMMAND} -E copy_if_different $<TARGET_FILE:Qt5::MultimediaWidgets> $<TARGET_FILE_DIR:${PROJECT_NAME}>
-		COMMAND ${CMAKE_COMMAND} -E copy_if_different $<TARGET_FILE:Qt5::Network> $<TARGET_FILE_DIR:${PROJECT_NAME}>
-		COMMAND ${CMAKE_COMMAND} -E copy_if_different $<TARGET_FILE:Qt5::OpenGL> $<TARGET_FILE_DIR:${PROJECT_NAME}>		
-		COMMAND ${CMAKE_COMMAND} -E copy_if_different $<TARGET_FILE:Qt5::Widgets> $<TARGET_FILE_DIR:${PROJECT_NAME}>	
-	)
+    foreach(QT_MODULE ${QT_MODULES})
+        add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
+            COMMAND ${CMAKE_COMMAND} -E copy_if_different $<TARGET_FILE:${QT_PACKAGE_NAME}::${QT_MODULE}> $<TARGET_FILE_DIR:${PROJECT_NAME}>
+        )
+    endforeach(QT_MODULE)
 	
 	# Copy dll plugins
-	foreach(QTMODULE Core;Gui;Multimedia;MultimediaWidgets;Network;OpenGL;Widgets)
-		if(NOT QTMODULE STREQUAL "")
-			foreach(PLUGIN ${Qt5${QTMODULE}_PLUGINS})
+	foreach(QT_MODULE ${QT_MODULES})
+		if(NOT QT_MODULE STREQUAL "")
+			foreach(PLUGIN ${${QT_PACKAGE_NAME}${QT_MODULE}_PLUGINS})
 				commonQt_copy_dll(${PROJECT_NAME} ${PLUGIN})
 			endforeach()
 		endif()
 	endforeach()
 
-    # Setup Openssl needed for network requests.
-    # Note that OpenSSL can be installed as an optional Qt component
-    # by selecting "OpenSSL Toolkit".
-    if(NOT OPENSSL_ROOT_DIR)
-        # Set default required openssl root dir if not provided
-        set(OPENSSL_ROOT_DIR "C:/Qt/Tools/OpenSSL/Win_x86")
+    # Setup network dependencies
+    if("Network" IN_LIST QT_MODULES)
+        # Setup Openssl needed for network requests.
+        # Note that OpenSSL can be installed as an optional Qt component
+        # by selecting "OpenSSL Toolkit".
+        if (NOT EXISTS ${QT_ROOT_DIR})
+            message(FATAL_ERROR "Variable QT_ROOT_DIR not found. Please set it to your Qt installation dir.")
+        endif()
+        set(OPENSSL_ROOT_DIR "${QT_ROOT_DIR}/Tools/OpenSSL/Win_x86")
+        common_setup_openssl(${PROJECT_NAME})
     endif()
-	common_setup_openssl(${PROJECT_NAME})
 endmacro()
