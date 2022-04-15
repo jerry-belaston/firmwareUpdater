@@ -15,6 +15,7 @@ public:
 class MainViewInterface : public ViewInterface
 {
 public:
+	virtual ~MainViewInterface() {}
 	enum class ViewType
 	{
 		Welcome,
@@ -27,18 +28,21 @@ public:
 class WelcomeViewInterface : public ViewInterface
 {
 public:
+	virtual ~WelcomeViewInterface() {}
 	virtual void setButtonEnabled(bool /*isEnabled*/) {}
 };
 
 class TemplateBrowserViewInterface : public ViewInterface
 {
 public:
+	virtual ~TemplateBrowserViewInterface() {}
 	virtual void setTemplateNameList(type::TemplateNameList const& /*templateNameList*/) {}
 };
 
 class TemplateInfoViewInterface : public ViewInterface
 {
 public:
+	virtual ~TemplateInfoViewInterface() {}
 	// TO FIX: Here by simplicity we send all the model but we should not
 	virtual void prepareImageCache(type::TemplateInfoList const& /*templateInfoList*/) {}
 	virtual void setTemplateInfo(std::uint32_t const /*templateIndex*/, type::TemplateInfo const& /*templateInfo*/) {}

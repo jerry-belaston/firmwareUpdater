@@ -1,5 +1,3 @@
-#pragma once
-
 #include "templatesSerialization.hpp"
 
 #include <QJsonArray>

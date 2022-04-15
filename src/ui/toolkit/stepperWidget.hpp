@@ -1,6 +1,6 @@
 #pragma once
 
-#include <Qwidget>
+#include <QWidget>
 #include <QTabWidget>
 
 namespace firmwareUpdater::ui::toolkit

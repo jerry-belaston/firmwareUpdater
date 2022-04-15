@@ -1,6 +1,6 @@
 #pragma once
 
-#include <Qwidget>
+#include <QWidget>
 #include "core/controller/viewInterface.hpp"
 
 #include "ui/toolkit/stepperWidget.hpp"

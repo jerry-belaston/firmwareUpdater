@@ -1,6 +1,6 @@
 #pragma once
 
-#include <Qwidget>
+#include <QWidget>
 #include <QListWidget>
 
 #include "core/controller/viewInterface.hpp"

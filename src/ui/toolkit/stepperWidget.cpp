@@ -3,7 +3,6 @@
 #include <QVBoxLayout>
 #include <QTabBar>
 #include <QMouseEvent>
-#include <qdebug>
 
 namespace firmwareUpdater::ui::toolkit
 {
