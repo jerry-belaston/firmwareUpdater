@@ -1,4 +1,6 @@
 #include <QApplication>
+#include <QGuiApplication>
+#include <QScreen>
 #include <QDesktopWidget>
 #include <QStyle>
 #include <QStyleFactory>
@@ -21,7 +23,7 @@ int main(int argc, char *argv[])
 	auto const availableGeometry = QApplication::desktop()->availableGeometry(&mainView);
 	auto const newWidth = availableGeometry.width() / 3.f;
 	mainView.setFixedSize(newWidth, newWidth * 1.1f);
-	mainView.setGeometry(QStyle::alignedRect(Qt::LeftToRight, Qt::AlignCenter, mainView.size(), QApplication::desktop()->availableGeometry()));
+	mainView.setGeometry(QStyle::alignedRect(Qt::LeftToRight, Qt::AlignCenter, mainView.size(), QGuiApplication::primaryScreen()->geometry()));
 
 	// Create controller
 	auto controller = firmwareUpdater::core::controller::Controller::create(*server);

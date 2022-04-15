@@ -9,7 +9,7 @@ MainView::MainView(QWidget* parent)
 {
 	// Background color
 	QPalette p = palette();
-	p.setColor(QPalette::Background, Qt::black);
+	p.setColor(QPalette::Window, Qt::black);
 	setPalette(p);
 
 	_stackedLayout.setContentsMargins(0, 0, 0, 0);

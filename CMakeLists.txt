@@ -18,6 +18,18 @@ set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
+# Set warnings level max (and warnings as errors)
+set_warnings_level_max()
+
+# TO FIX: Meanwhile Qt migration, we temporary remove warning below.
+# "warning C5054: operator '&': deprecated between enumerations of different types
+# 2>C:\Qt\5.15.2\msvc2019\include\QtWidgets/qsizepolicy.h(137,38): message : to simplify
+# migration, consider the temporary use of /Wv:18 flag with the version of the compiler 
+# with which you used to build without warnings"
+if (WIN32 AND MSVC)
+    add_compile_options(/Wv:18)
+endif()
+
 # Add project source files
 set(SOURCE_FILES
 	${CMAKE_CURRENT_SOURCE_DIR}/src/core/common/type.hpp

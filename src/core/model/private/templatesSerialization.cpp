@@ -16,7 +16,7 @@ type::TemplateInfoList load(QJsonObject const& json)
 	if (json.contains("templates") && json["templates"].isArray())
 	{
 		auto const& jsonTemplateInfoList = json["templates"].toArray();
-		for (auto i = 0u; i < jsonTemplateInfoList.size(); ++i)
+		for (auto i = 0; i < jsonTemplateInfoList.size(); ++i)
 		{
 			auto const& jsonTemplateInfo = jsonTemplateInfoList[i].toObject();
 			auto templateInfo = type::TemplateInfo{};
@@ -24,7 +24,7 @@ type::TemplateInfoList load(QJsonObject const& json)
 			if (jsonTemplateInfo.contains("steps") && jsonTemplateInfo["steps"].isArray())
 			{
 				auto const& jsonStepInfoList = jsonTemplateInfo["steps"].toArray();
-				for (auto j = 0u; j < jsonStepInfoList.size(); ++j)
+				for (auto j = 0; j < jsonStepInfoList.size(); ++j)
 				{
 					auto const& jsonStepInfo = jsonStepInfoList[j].toObject();
 					auto stepInfo = type::TemplateInfo::StepInfo{};

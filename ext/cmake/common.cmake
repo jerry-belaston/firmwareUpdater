@@ -4,6 +4,16 @@ if(COMMON_CMAKE_INCLUDED)
 endif()
 set(COMMON_CMAKE_INCLUDED true)
 
+# Set the warnings level to max (including warnings as error)
+function(set_warnings_level_max)
+    if(WIN32 AND MSVC)
+        # W4 is enough on Windows (too much noise with Wall)
+		add_compile_options(/W4 /WX)
+	elseif(APPLE)
+		add_compile_options(-Wall -Werror -g)
+	endif()
+endfunction(set_warnings_level_max)
+
 # Create source group following the same project structure
 # SOURCE_GROUP_PREFIXNAME SubGroups to prefix to the generated group name structure
 # SOURCE_FILES The list of source files to group (paths can be either relative to current dir, or absolute)
