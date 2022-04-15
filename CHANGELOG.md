@@ -4,6 +4,11 @@ All notable changes to Firmware Updater will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
 ## [Unreleased]
+### Added
+- Image cache in the Template Info view for boosting image url download and rendering
+
+### Fixed
+- Compilation warnings/errors, now set to maximum level (including warning as error)
 
 ## [1.0.1] - 2022-04-13
 ### Added
