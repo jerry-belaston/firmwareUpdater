@@ -21,17 +21,22 @@ do
 	shift
 done
 
-#Run Cmake
-qt_version="5.15.2"
+#Configure cmake
+qt_version="6.2.4"
 qt_version_major="${qt_version%%.*}"
 qt_root_dir="C:/Qt"
-qt_toolchain_dir="${qt_root_dir}/${qt_version}/msvc2019"
+qt_toolchain_dir="${qt_root_dir}/${qt_version}/msvc2019_64"
 build_system_generator="Visual Studio 16 2019"
-build_system_platform="Win32"
+build_system_platform="x64"
 build_dir="_build_win_msvc_${build_system_platform}"
 source_dir=.
-cmake -S "$source_dir" -B "$build_dir" -G "$build_system_generator" -A "$build_system_platform"  -DCMAKE_PREFIX_PATH="${qt_toolchain_dir}" -DQT_ROOT_DIR="${qt_root_dir}" -DQT_PACKAGE_VERSION_MAJOR="${qt_version_major}"
 
-# Wait user action to exit
-echo
-read -p "Press any key to exit..."
+# Run cmake
+cmake \
+    -S "$source_dir" \
+    -B "$build_dir" \
+    -G "$build_system_generator" \
+    -A "$build_system_platform"  \
+    -DCMAKE_PREFIX_PATH="${qt_toolchain_dir}" \
+    -DQT_ROOT_DIR="${qt_root_dir}" \
+    -DQT_VERSION_MAJOR="${qt_version_major}"

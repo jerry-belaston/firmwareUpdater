@@ -7,6 +7,24 @@ set(COMMON_QT_CMAKE_INCLUDED true)
 #include cmake common functions
 include(common)
 
+# Setup Qt
+macro(commonQt_setup_qt QT_PACKAGE_NAME QT_MODULES)
+	# Enable automatic Qt precompiler
+	set(CMAKE_AUTOMOC ON)
+	set(CMAKE_AUTORCC ON)
+	set(CMAKE_AUTOUIC ON)
+
+	# Find Qt and required components
+	find_package(${QT_PACKAGE_NAME} COMPONENTS ${QT_MODULES} REQUIRED)
+    
+    # Ignore migration compilation warnings if not on Qt 6
+    # Allows to silent warnings like "C5054: operator '&': 
+    # deprecated between enumerations of different types"
+    if(WIN32 AND MSVC AND ${QT_VERSION_MAJOR} LESS 6)
+        add_compile_options(/Wv:18)
+    endif()
+endmacro()
+
 # Create source group for the given qt source and generated files
 # SOURCE_FILES The list of source files to add
 # GENERATED_UI_HPP_FILES hpp files generated from ui source files
@@ -32,60 +50,31 @@ macro(commonQt_source_group SOURCE_FILES GENERATED_UI_HPP_FILES GENERATED_HPP_CP
 	endif()
 endmacro()
 
-# Setup Qt
-macro(commonQt_setup_qt QT_PACKAGE_NAME QT_MODULES)
-	# Enable automatic Qt precompiler
-	set(CMAKE_AUTOMOC ON)
-	set(CMAKE_AUTORCC ON)
-	set(CMAKE_AUTOUIC ON)
+function(commonQt_add_executable TARGET_NAME 
+    SOURCE_FILES GENERATED_UI_HPP_FILES GENERATED_HPP_CPPMOC_FILES)
+    if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
+        qt_add_executable(${TARGET_NAME}
+            MANUAL_FINALIZATION
+            ${SOURCE_FILES}
+            ${GENERATED_UI_HPP_FILES}
+            ${GENERATED_HPP_CPPMOC_FILES}
+        )
+    else()
+        add_executable(${TARGET_NAME}
+            ${SOURCE_FILES}
+            ${GENERATED_UI_HPP_FILES}
+            ${GENERATED_HPP_CPPMOC_FILES}
+        )
+    endif()
+endfunction()
 
-	# Find Qt and required components
-	find_package(${QT_PACKAGE_NAME} COMPONENTS ${QT_MODULES} REQUIRED)
-endmacro()
 
-# Copy needed dll in the project target directory
-# PROJECT_NAME Main project target name
-# DLL_PLUGIN A dll plugin for a module
-macro(commonQt_copy_dll PROJECT_NAME DLL_PLUGIN)
-	# Find the release *.dll file
-	get_target_property(DLL_PLUGIN_PATH ${DLL_PLUGIN} LOCATION)
-	get_filename_component(DLL_PLUGIN_FOLDER ${DLL_PLUGIN_PATH} DIRECTORY)
-	get_filename_component(DLL_PLUGIN_FOLDER_NAME ${DLL_PLUGIN_FOLDER} NAME)	
-	
-	# Find the debug *d.dll file
-	get_target_property(DLL_PLUGIN_DEBUG_PATH ${DLL_PLUGIN} IMPORTED_LOCATION_DEBUG)
-	get_filename_component(DLL_PLUGIN_DEBUG_FOLDER ${DLL_PLUGIN_DEBUG_PATH} DIRECTORY)
-	get_filename_component(DLL_PLUGIN_DEBUG_FOLDER_NAME ${DLL_PLUGIN_DEBUG_FOLDER} NAME)	
-	
-	# Copy dlls
-	add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
-		 COMMAND ${CMAKE_COMMAND} -E make_directory $<TARGET_FILE_DIR:${PROJECT_NAME}>/${DLL_PLUGIN_FOLDER_NAME}/
-		 COMMAND ${CMAKE_COMMAND} -E copy_if_different $<$<CONFIG:Debug>:${DLL_PLUGIN_DEBUG_PATH}> $<$<NOT:$<CONFIG:Debug>>:${DLL_PLUGIN_PATH}> $<TARGET_FILE_DIR:${PROJECT_NAME}>/${DLL_PLUGIN_FOLDER_NAME})
-endmacro()
-
-# Link target to libraries and copy qt dlls to executable folder
-# PROJECT_NAME Main project target name
-macro(commonQt_target_link PROJECT_NAME QT_PACKAGE_NAME QT_MODULES)
+# Finalize last steps to make executable ready (link, dependencies setup, dlls copy...) 
+function(commonQt_finalize_executable TARGET_NAME QT_MODULES)
 	# Link executable to needed libraries
     foreach(QT_MODULE ${QT_MODULES})
-        target_link_libraries(${PROJECT_NAME} Qt::${QT_MODULE})
+        target_link_libraries(${TARGET_NAME} PRIVATE Qt::${QT_MODULE})
     endforeach(QT_MODULE)
-
-	# Copy dlls
-    foreach(QT_MODULE ${QT_MODULES})
-        add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
-            COMMAND ${CMAKE_COMMAND} -E copy_if_different $<TARGET_FILE:${QT_PACKAGE_NAME}::${QT_MODULE}> $<TARGET_FILE_DIR:${PROJECT_NAME}>
-        )
-    endforeach(QT_MODULE)
-	
-	# Copy dll plugins
-	foreach(QT_MODULE ${QT_MODULES})
-		if(NOT QT_MODULE STREQUAL "")
-			foreach(PLUGIN ${${QT_PACKAGE_NAME}${QT_MODULE}_PLUGINS})
-				commonQt_copy_dll(${PROJECT_NAME} ${PLUGIN})
-			endforeach()
-		endif()
-	endforeach()
 
     # Setup network dependencies
     if("Network" IN_LIST QT_MODULES)
@@ -96,6 +85,44 @@ macro(commonQt_target_link PROJECT_NAME QT_PACKAGE_NAME QT_MODULES)
             message(FATAL_ERROR "Variable QT_ROOT_DIR not found. Please set it to your Qt installation dir.")
         endif()
         set(OPENSSL_ROOT_DIR "${QT_ROOT_DIR}/Tools/OpenSSL/Win_x86")
-        common_setup_openssl(${PROJECT_NAME})
+        common_setup_openssl(${TARGET_NAME})
     endif()
-endmacro()
+    
+    set_target_properties(${PROJECT_NAME} PROPERTIES
+        MACOSX_BUNDLE_GUI_IDENTIFIER my.example.com
+        MACOSX_BUNDLE_BUNDLE_VERSION ${PROJECT_VERSION}
+        MACOSX_BUNDLE_SHORT_VERSION_STRING ${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}
+        MACOSX_BUNDLE TRUE
+        WIN32_EXECUTABLE TRUE
+    )
+
+    if(QT_VERSION_MAJOR EQUAL 6)
+        qt_finalize_executable(${PROJECT_NAME})
+    endif()
+    
+    commonQt_deploy_executable(${PROJECT_NAME})
+endfunction()
+
+function(commonQt_deploy_executable TARGET_NAME)
+    # Retrieve the absolute path to qmake and then use that path to find the binaries
+    get_target_property(QMAKE_EXECUTABLE Qt::qmake IMPORTED_LOCATION)
+    get_filename_component(QMAKE_BIN_DIR "${QMAKE_EXECUTABLE}" DIRECTORY)
+    
+    # Find and run deployment binary
+    if(WIN32)
+        find_program(WINDEPLOYQT_EXECUTABLE windeployqt HINTS "${QMAKE_BIN_DIR}")
+        add_custom_command(TARGET ${TARGET_NAME} POST_BUILD
+            COMMAND "${CMAKE_COMMAND}" -E env PATH="${QMAKE_BIN_DIR}" "${WINDEPLOYQT_EXECUTABLE}" 
+                "$<TARGET_FILE:${TARGET_NAME}>"
+            COMMENT "Running windeployqt..."
+        )
+    else(APPLE)
+        find_program(MACDEPLOYQT_EXECUTABLE macdeployqt HINTS "${QMAKE_BIN_DIR}")
+        add_custom_command(TARGET ${TARGET_NAME} POST_BUILD
+            COMMAND "${MACDEPLOYQT_EXECUTABLE}" 
+                "$<TARGET_FILE_DIR:${TARGET_NAME}>/../.."
+                -always-overwrite
+            COMMENT "Running macdeployqt..."
+        )
+    endif()
+endfunction()

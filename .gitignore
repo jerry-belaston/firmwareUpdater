@@ -4,6 +4,9 @@
 # Ignore macOS files
 .DS_Store
 
+# Ignore Visual Studio
+.vs
+
 # Ignore QtCreator files
 .qmake.cache
 .qmake.stash
