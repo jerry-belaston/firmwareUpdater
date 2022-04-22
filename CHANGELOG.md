@@ -5,6 +5,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
 ## [Unreleased]
 ### Added
+- Manage application version from both CMake and QMake (instead of hard coding in source file)
+- Application now working under Qt versions 5 and 6
 - Image cache in the Template Info view for boosting image url download and rendering
 
 ### Fixed
