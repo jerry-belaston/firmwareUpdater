@@ -4,6 +4,7 @@
 #include <QStyle>
 #include <QStyleFactory>
 
+#include "firmwareUpdaterConfig.h"
 #include "core/model/server.hpp"
 #include "core/controller/controller.hpp"
 #include "ui/view/main/mainView.hpp"
@@ -18,7 +19,8 @@ int main(int argc, char *argv[])
 
 	// Create view
 	auto mainView = firmwareUpdater::ui::view::main::MainView{};
-	mainView.setWindowTitle("Firmware Updater 1.0.2");
+	mainView.setWindowTitle("Firmware Updater " + 
+		QString::number(FU_VERSION_MAJ) +"." + QString::number(FU_VERSION_MIN) + "."  + QString::number(FU_VERSION_SUB));
 	auto availableGeometry = QGuiApplication::screenAt(mainView.mapToGlobal(QPoint{ mainView.width() / 2, 0 }))->availableGeometry();
 	auto const newWidth = availableGeometry.width() / 3.f;
 	mainView.setFixedSize(newWidth, newWidth * 1.1f);

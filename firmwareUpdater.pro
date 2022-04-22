@@ -4,6 +4,13 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets network
 
 CONFIG += c++2a
 
+FU_VERSION_MAJ = 1 
+FU_VERSION_MIN = 0
+FU_VERSION_SUB = 2
+FU_VERSION_REV = 0
+
+QMAKE_SUBSTITUTES += firmwareUpdaterConfig.h.in
+
 msvc {
     QMAKE_CXXFLAGS += /W4
     QMAKE_CXXFLAGS += /WX

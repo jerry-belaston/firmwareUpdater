@@ -1,7 +1,13 @@
 cmake_minimum_required(VERSION 3.22.1 FATAL_ERROR)
 
 # Project base information
-project(firmwareUpdater VERSION 1.0.0 LANGUAGES CXX)
+project(firmwareUpdater VERSION 1.0.2.0 LANGUAGES CXX)
+
+# Project properties
+set(FU_VERSION_MAJ      ${PROJECT_VERSION_MAJOR})
+set(FU_VERSION_MIN      ${PROJECT_VERSION_MINOR})
+set(FU_VERSION_SUB      ${PROJECT_VERSION_PATCH})
+set(FU_VERSION_REV      ${PROJECT_VERSION_TWEAK})
 
 # Add common funtions folder
 set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/ext/cmake)
@@ -11,6 +17,10 @@ set(CMAKE_INCLUDE_CURRENT_DIR ON)
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
+
+# Add global CMake preprocessor definition
+# Used to get build system source in firmwareUpdaterConfig.h.in
+add_definitions(-DCMAKE_FLAGS_USED)
 
 # Include Qt common functions
 include(commonQt)
@@ -51,7 +61,17 @@ set(SOURCE_FILES
 	${CMAKE_CURRENT_SOURCE_DIR}/src/ui/view/welcome/welcomeView.hpp
 	${CMAKE_CURRENT_SOURCE_DIR}/src/main.cpp
 )
-commonQt_source_group("${SOURCE_FILES}" 
+
+# Add config file to sources
+set(FU_CONFIG_FILE "${CMAKE_CURRENT_BINARY_DIR}/firmwareUpdaterConfig.h")
+configure_file(
+	"${CMAKE_CURRENT_SOURCE_DIR}/firmwareUpdaterConfig.h.in"
+	"${CMAKE_CURRENT_BINARY_DIR}/firmwareUpdaterConfig.h"
+)
+list(APPEND SOURCE_FILES "${FU_CONFIG_FILE}")
+
+# Group all sources
+commonQt_source_group("${SOURCE_FILES}"
     GENERATED_UI_HPP_FILES 
     GENERATED_HPP_CPPMOC_FILES
 )
