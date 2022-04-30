@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.22.1 FATAL_ERROR)
 
 # Project base information
-project(firmwareUpdater VERSION 1.0.3.0 LANGUAGES CXX)
+project(firmwareUpdater VERSION 2.0.0.0 LANGUAGES CXX)
 
 # Project properties
 set(FU_VERSIONMAJ		${PROJECT_VERSION_MAJOR})
