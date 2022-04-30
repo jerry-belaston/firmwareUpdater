@@ -1,6 +1,9 @@
 #include "controller.hpp"
+#include "controllerSingle.hpp"
+#include "controllerMulti.hpp"
 #include "viewInterface.hpp"
-#include "core/model/server.hpp"
+#include "core/model/templateInfo/server.hpp"
+#include "core/model/device/uploadManager.hpp"
 #include <algorithm>
 #include <cassert>
 
@@ -13,158 +16,94 @@ namespace firmwareUpdater::core::controller
 class Controller::PImpl
 {
 public:
-	PImpl(Controller& parent, model::Server& server);
+	PImpl(Controller& parent, model::templateInfo::Server& server, model::device::UploadManager& uploadManager);
 	virtual ~PImpl() = default;
-	void setCurrentView(MainViewInterface::ViewType const viewType);
-	void updateTemplateInfoListCache(type::TemplateInfoList const& templateInfoList);
 
 	// Members
 	Controller& _parent;
-
-	// Model
-	model::Server& _server;
-	type::TemplateInfoList _templateInfoList;
-	type::TemplateNameList _templateNameList;
-	MainViewInterface::ViewType _currentViewType{ MainViewInterface::ViewType::Welcome };
+	model::templateInfo::Server& _server;
+	model::device::UploadManager& _uploadManager;
+	ControllerSingle::UniquePointer _controllerSingle{};
+	ControllerMulti::UniquePointer _controllerMulti{};
 
 	// View
-	std::unique_ptr<MainViewInterface> _dummyMainView;
-	MainViewInterface* _mainView{ nullptr };
-	std::unique_ptr<WelcomeViewInterface> _dummyWelcomeView;
-	WelcomeViewInterface* _welcomeView{ nullptr };
-	std::unique_ptr<TemplateBrowserViewInterface> _dummyTemplateBrowserView;
-	TemplateBrowserViewInterface* _templateBrowserView{ nullptr };
-	std::unique_ptr<TemplateInfoViewInterface> _dummyTemplateInfoView;
-	TemplateInfoViewInterface* _templateInfoView{ nullptr };
-
-public:
-	// server callback
-	void onTemplateInfoListChanged(type::TemplateInfoList const& templateInfoList);
+	std::unique_ptr<MainWindowViewInterface> _dummyMainWindowView;
+	MainWindowViewInterface* _mainWindowView{ nullptr };
 };
 
-Controller::PImpl::PImpl(Controller& parent, model::Server& server)
+Controller::PImpl::PImpl(Controller& parent, model::templateInfo::Server& server, model::device::UploadManager& uploadManager)
 	: _parent{ parent }
 	, _server{ server }
-	, _dummyMainView{ std::make_unique<MainViewInterface>() }
-	, _mainView{ _dummyMainView.get() }
-	, _dummyWelcomeView{ std::make_unique<WelcomeViewInterface>() }
-	, _welcomeView{ _dummyWelcomeView.get() }
-	, _dummyTemplateBrowserView{ std::make_unique<TemplateBrowserViewInterface>() }
-	, _templateBrowserView{ _dummyTemplateBrowserView.get() }
-	, _dummyTemplateInfoView{ std::make_unique<TemplateInfoViewInterface>() }
-	, _templateInfoView{ _dummyTemplateInfoView.get() }
-
+	, _uploadManager{ uploadManager }
+	, _controllerSingle{ ControllerSingle::create(server, uploadManager) }
+	, _controllerMulti{ ControllerMulti::create(server, uploadManager) }
+	, _dummyMainWindowView{ std::make_unique<MainWindowViewInterface>() }
+	, _mainWindowView{ _dummyMainWindowView.get() }
 {
-}
-
-void Controller::PImpl::setCurrentView(MainViewInterface::ViewType const currentViewType)
-{
-	_currentViewType = currentViewType;
-	_mainView->setCurrentView(currentViewType);
-}
-
-void Controller::PImpl::updateTemplateInfoListCache(type::TemplateInfoList const& templateInfoList)
-{
-	_templateInfoList = templateInfoList;
-	_templateNameList.clear();
-	for (auto const& templateInfo : templateInfoList)
-	{
-		_templateNameList.push_back(templateInfo.name);
-	}
-}
-
-void Controller::PImpl::onTemplateInfoListChanged(type::TemplateInfoList const& templateInfoList)
-{
-	updateTemplateInfoListCache(templateInfoList);
-	_templateBrowserView->setTemplateNameList(_templateNameList);
-	_templateInfoView->prepareImageCache(_templateInfoList);
-	// Force template list view
-	if(templateInfoList.empty())
-	{
-		_welcomeView->setButtonEnabled(false);
-		setCurrentView(MainViewInterface::ViewType::Welcome);
-	}
-	else
-	{
-		_welcomeView->setButtonEnabled(true);
-		if (_currentViewType != MainViewInterface::ViewType::Welcome)
-			setCurrentView(MainViewInterface::ViewType::TemplateList);
-	}
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////
 // Controller
 //////////////////////////////////////////////////////////////////////////////////////////////////
 
-Controller::UniquePointer Controller::create(model::Server& server)
+Controller::UniquePointer Controller::create(model::templateInfo::Server& server,
+	model::device::UploadManager& uploadManager)
 {
-	return UniquePointer(new Controller(server));
+	return UniquePointer(new Controller(server, uploadManager));
 }
 
-Controller::Controller(model::Server& server)
-	: _pImpl(std::make_unique<PImpl>(*this, server))
+Controller::Controller(model::templateInfo::Server& server,
+	model::device::UploadManager& uploadManager)
+	: _pImpl(std::make_unique<PImpl>(*this, server, uploadManager))
 {
-	_pImpl->_server.setTemplateInfoListChangeHandler([this] (type::TemplateInfoList const& templateInfoList)
-		{ 
-			_pImpl->onTemplateInfoListChanged(templateInfoList);
-		});
+	// Start in single mode
+	_pImpl->_controllerSingle->start();
 }
 
 Controller::~Controller()
 {
 }
 
-void Controller::setView(MainViewInterface& mainViewInterface)
+ControllerSingle& Controller::getControllerSingle()
 {
-	_pImpl->_mainView = &mainViewInterface;
-	_pImpl->_mainView->setController(*this);
-
-	// Display default view
-	_pImpl->setCurrentView(MainViewInterface::ViewType::Welcome);
+	return *_pImpl->_controllerSingle;
 }
 
-void Controller::setView(WelcomeViewInterface& welcomeViewInterface)
+ControllerMulti& Controller::getControllerMulti()
 {
-	_pImpl->_welcomeView = &welcomeViewInterface;
-	_pImpl->_welcomeView->setController(*this);
-	_pImpl->_welcomeView->setButtonEnabled(_pImpl->_templateInfoList.size());
+	return *_pImpl->_controllerMulti;
 }
 
-void Controller::setView(TemplateBrowserViewInterface& templateBrowserViewInterface)
+void Controller::setView(MainWindowViewInterface& mainWindowViewInterface)
 {
-	_pImpl->_templateBrowserView = &templateBrowserViewInterface;
-	_pImpl->_templateBrowserView->setController(*this);
-	_pImpl->_templateBrowserView->setTemplateNameList(_pImpl->_templateNameList);
+	_pImpl->_mainWindowView = &mainWindowViewInterface;
+	_pImpl->_mainWindowView->setController(*this);
 }
 
-
-void Controller::setView(TemplateInfoViewInterface& templateInfoViewInterface)
+void Controller::onModeButtonClicked(bool isModeMulti)
 {
-	_pImpl->_templateInfoView = &templateInfoViewInterface;
-	_pImpl->_templateInfoView->setController(*this);
-	_pImpl->_templateInfoView->setTemplateInfo(0, {});
-}
+	// Switch controller
+	if (isModeMulti)
+	{
+		_pImpl->_controllerSingle->stop();
+		_pImpl->_controllerMulti->start();
+	}
+	else
+	{
+		_pImpl->_controllerMulti->stop();
+		_pImpl->_controllerSingle->start();
+	}
 
-void Controller::onStartButtonClicked()
-{
-	_pImpl->setCurrentView(MainViewInterface::ViewType::TemplateList);
-}
+	// Reset models (will cause them to retrigger everything to registered controllers)
+	_pImpl->_uploadManager.reset();
+	_pImpl->_server.reset();
 
-void Controller::onListItemClicked(std::uint32_t const itemIndex)
-{
-	assert(itemIndex < _pImpl->_templateInfoList.size());
-	_pImpl->_templateInfoView->setTemplateInfo(itemIndex, _pImpl->_templateInfoList[itemIndex]);
-	_pImpl->setCurrentView(MainViewInterface::ViewType::TemplateInfo);
-}
-
-void Controller::onStepsEnded()
-{
-	_pImpl->setCurrentView(MainViewInterface::ViewType::TemplateList);
-}
-
-void Controller::onStepsCancelled()
-{
-	_pImpl->setCurrentView(MainViewInterface::ViewType::TemplateList);
+	// Change view mode
+	auto const shouldExpand{ isModeMulti };
+	auto const shouldDisplayToolbar{ isModeMulti };
+	_pImpl->_mainWindowView->setPageType(
+		isModeMulti ? PageType::MultiModeWorkspace : PageType::SingleModeWorkspace, 
+		shouldExpand, shouldDisplayToolbar);
 }
 
 } // namespace firmwareUpdater::core::controller

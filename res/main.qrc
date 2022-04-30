@@ -1,0 +1,9 @@
+<!DOCTYPE RCC><RCC version="1.0">
+<qresource>
+    <file>main.qss</file>
+    <file>logo.png</file>
+    <file>upload.png</file>
+    <file>upload-hover.png</file>
+    <file>upload-disabled.png</file>
+</qresource>
+</RCC>

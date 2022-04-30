@@ -4,40 +4,45 @@
 #include <QStyle>
 #include <QStyleFactory>
 
-#include "firmwareUpdaterConfig.h"
-#include "core/model/server.hpp"
-#include "core/controller/controller.hpp"
-#include "ui/view/main/mainView.hpp"
+#include "config.h"
+#include "core/core.hpp"
+#include "ui/view/mainWindow/mainWindowView.hpp"
+#include "ui/toolkit/qssHelper.hpp"
 
 int main(int argc, char *argv[])
 {
 	// Create Qt application
 	QApplication application(argc, argv);
+	auto const applicationVersion = 
+		QString::number(FU_VERSIONMAJ) + "." +
+		QString::number(FU_VERSIONMIN) + "." +
+		QString::number(FU_VERSIONSUB);
+	QCoreApplication::setApplicationVersion(applicationVersion);
+	QCoreApplication::setApplicationName(FU_PRODUCTNAME);
+	QCoreApplication::setOrganizationName(FU_COMPANYNAME);
+	QCoreApplication::setOrganizationDomain(FU_URLABOUTINFO);
 
-	// Create model
-	auto server = firmwareUpdater::core::model::Server::create();
+	// Set Stylesheet
+	firmwareUpdater::ui::toolkit::qssHelper::loadProjectQSS();
 
 	// Create view
-	auto mainView = firmwareUpdater::ui::view::main::MainView{};
-	mainView.setWindowTitle("Firmware Updater " + 
-		QString::number(FU_VERSION_MAJ) +"." + QString::number(FU_VERSION_MIN) + "."  + QString::number(FU_VERSION_SUB));
-	auto availableGeometry = QGuiApplication::screenAt(mainView.mapToGlobal(QPoint{ mainView.width() / 2, 0 }))->availableGeometry();
+	auto mainWindowView = firmwareUpdater::ui::view::mainWindow::MainWindowView{};
+	mainWindowView.setWindowIcon(QIcon{ ":/logo.png" });
+	mainWindowView.setWindowTitle(QString(FU_PRODUCTNAME) + " " + applicationVersion);
+	auto availableGeometry = QGuiApplication::screenAt(mainWindowView.mapToGlobal(QPoint{ mainWindowView.width() / 2, 0 }))->availableGeometry();
 	auto const newWidth = availableGeometry.width() / 3.f;
-	mainView.setFixedSize(newWidth, newWidth * 1.1f);
-	mainView.setGeometry(QStyle::alignedRect(Qt::LeftToRight, Qt::AlignCenter, mainView.size(), availableGeometry));
+	mainWindowView.setFixedSize(newWidth, newWidth * 1.1f);
+	mainWindowView.setGeometry(QStyle::alignedRect(Qt::LeftToRight, Qt::AlignCenter, mainWindowView.size(), availableGeometry));
 
-	// Create controller
-	auto controller = firmwareUpdater::core::controller::Controller::create(*server);
+	// Create model
+	auto core = firmwareUpdater::core::Core::create();
 
 	// Set view and start server model
-	controller->setView(mainView);
-	controller->setView(*mainView.getWelcomeView());
-	controller->setView(*mainView.getTemplateBrowserView());
-	controller->setView(*mainView.getTemplateInfoView());
-	server->start();
+	core->getController().setView(mainWindowView);
+	core->start();
 
 	// Display view
-	mainView.show();
+	mainWindowView.show();
 
 	// Enter the QApplication main event loop and wait until exit is called
 	return application.exec();

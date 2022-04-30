@@ -1,0 +1,184 @@
+/******************************************************************************
+* General Toolkit stylsheet 
+******************************************************************************/
+
+firmwareUpdater--ui--toolkit--StepperWidget QTabBar:tab {
+	border: 1px solid rgba(255, 255, 255, 50);;
+	color: lightgrey;
+	font: 13pt bold;
+	min-height: 50px;
+	min-width: 100px;
+	margin-left:5px;
+	margin-right:5px;
+}
+
+firmwareUpdater--ui--toolkit--StepperWidget QTabWidget:pane {
+	border: none;
+	margin:5px;
+	margin-top:30px;
+}
+
+firmwareUpdater--ui--toolkit--StepperWidget QTabBar:tab::selected {
+	background: rgb(0, 0, 90);
+	color: white;
+}
+
+/******************************************************************************
+* Application stylesheet 
+******************************************************************************/
+
+firmwareUpdater--ui--view--mainWindow--MainWindowView {
+	background: black;
+}
+
+firmwareUpdater--ui--view--workspace--ModeZone{
+	max-height: 50;
+}
+
+firmwareUpdater--ui--view--workspace--ModeZone QCheckBox{
+	min-width: 60;
+	min-height: 30;
+	background: white;
+	font: 15pt bold;
+	color: black;
+	border-radius: 15px;
+	border: 0px solid white;
+}
+
+firmwareUpdater--ui--view--workspace--ModeZone QCheckBox:indicator {
+	background: rgb(0, 0, 90);;
+	border-radius: 15px;
+	border: 0px solid black;
+	width: 30;
+	height: 30;
+}
+
+firmwareUpdater--ui--view--workspace--templateInfo--TemplateInfo QLabel[objectName="TemplateInfo-EmptyLabel"] {
+	background: rgb(0, 0, 90);
+	font: 13pt bold;
+	color: white;
+	min-width: 100px; 
+}
+
+firmwareUpdater--ui--view--workspace--modeMulti--MultiModeView QLabel[objectName="MultiModeView-EmptyLabel"] {
+	background: rgb(0, 0, 90);
+	font: 13pt bold;
+	color: white;
+	min-width: 100px; 
+}
+
+firmwareUpdater--ui--view--workspace--modeSingle--commander--Commander { 
+	min-height: 150;
+	background: rgb(0, 0, 90);
+}
+
+firmwareUpdater--ui--view--workspace--modeSingle--commander--Commander QPushButton {
+	border-image: url(":/upload.png");
+	background-repeat: no-repeat;
+	width: 100px;
+	height: 100px;
+}
+
+firmwareUpdater--ui--view--workspace--modeSingle--commander--Commander QPushButton:hover {
+	border-image: url(":/upload-hover.png");
+	background-repeat: no-repeat;
+}
+
+firmwareUpdater--ui--view--workspace--modeSingle--commander--Commander QPushButton:checked {
+	border-image: url(":/upload-hover.png");
+	background-repeat: no-repeat;
+}
+
+firmwareUpdater--ui--view--workspace--modeSingle--commander--Commander QPushButton:disabled {
+	border-image: url(":/upload-disabled.png");
+	background-repeat: no-repeat;
+}
+
+firmwareUpdater--ui--view--workspace--modeSingle--projectZone--ProjectZoneSingle QLabel{ 
+	color: lightgrey;
+	font: 20pt bold;
+	min-height: 50px;
+}
+
+firmwareUpdater--ui--view--workspace--modeSingle--projectZone--ProjectZoneSingle QComboBox{ 
+	color: lightgrey;
+	font: 13pt bold;
+	min-height: 50px;
+	background: rgb(0, 0, 90);
+	selection-background-color: rgb(0, 0, 90);
+}
+
+firmwareUpdater--ui--view--workspace--modeMulti--projectZone--ProjectZoneMulti QListWidget {
+	border: none;
+	font: 13pt bold;
+	background-color: black;
+	outline: none;
+}
+
+firmwareUpdater--ui--view--workspace--modeMulti--projectZone--ProjectZoneMulti QListWidget:item:hover{
+	background-color: rgba(0, 0, 90, 200);
+}
+
+firmwareUpdater--ui--view--workspace--modeMulti--projectZone--ProjectZoneMulti QListWidget:item:selected {
+	background-color: rgba(0, 0, 90, 100);
+}
+
+firmwareUpdater--ui--view--workspace--modeMulti--projectZone--DeviceWidget {
+	background: rgb(0, 0, 90);
+}
+
+firmwareUpdater--ui--view--workspace--modeMulti--projectZone--DeviceWidget:hover {
+	background-color: rgba(0, 0, 90, 200);
+}
+
+firmwareUpdater--ui--view--workspace--modeMulti--projectZone--DeviceWidget:selected {
+	background-color: rgba(0, 0, 90, 100);
+}
+
+firmwareUpdater--ui--view--workspace--modeMulti--projectZone--DeviceWidget QLabel[objectName="DeviceWidget-DeviceUserNameLabel"] {
+	background: rgb(0,0,70);
+	font: italic 13pt;
+	color: darkgrey;
+	padding-left: 5;
+	max-width: 150px;
+	min-width: 150px;
+}
+
+firmwareUpdater--ui--view--workspace--modeMulti--projectZone--DeviceWidget QComboBox[objectName="DeviceWidget-TemplatesComboBox"] {
+	border: none;
+	color: lightgrey;
+	font: 11pt bold;
+	min-height: 40px;
+	background: black;
+	max-width: 150px;
+	min-width: 150px;
+}
+
+firmwareUpdater--ui--view--workspace--modeMulti--projectZone--DeviceWidget QPushButton[objectName="DeviceWidget-UploadButton"] {
+	border-image: url(":/upload.png");
+	background-repeat: no-repeat;
+}
+
+firmwareUpdater--ui--view--workspace--modeMulti--projectZone--DeviceWidget QPushButton[objectName="DeviceWidget-UploadButton"]:hover {
+	border-image: url(":/upload-hover.png");
+	background-repeat: no-repeat;
+}
+
+firmwareUpdater--ui--view--workspace--modeMulti--projectZone--DeviceWidget QPushButton[objectName="DeviceWidget-UploadButton"]:checked {
+	border-image: url(":/upload-hover.png");
+	background-repeat: no-repeat;
+}
+
+firmwareUpdater--ui--view--workspace--modeMulti--projectZone--DeviceWidget QProgressBar[objectName="DeviceWidget-ProgressBar"] {
+	min-height: 40px;
+	border: none;
+	background: black;
+	text-align: center;
+	color: white;
+}
+
+firmwareUpdater--ui--view--workspace--modeMulti--projectZone--DeviceWidget QProgressBar[objectName="DeviceWidget-ProgressBar"]:chunk {
+	width: 10px;
+	border: none;
+	background-color: rgb(12,61,27);
+}

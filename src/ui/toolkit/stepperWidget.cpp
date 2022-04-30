@@ -3,17 +3,19 @@
 #include <QVBoxLayout>
 #include <QTabBar>
 #include <QMouseEvent>
+#include <cassert>
+#include <numeric>
 
 namespace firmwareUpdater::ui::toolkit
 {
 
 StepWidget::StepWidget(QWidget* parent)
-	: QWidget{ parent }
+	: QFrame{ parent }
 {
 }
 
 StepperWidget::StepperWidget(QWidget* parent)
-	: QWidget{ parent }
+	: QFrame{ parent }
 {
 	// Layout
 	auto* layout = new QVBoxLayout{ this };
@@ -21,29 +23,6 @@ StepperWidget::StepperWidget(QWidget* parent)
 
 	// TabWidget
 	_tabWidget.setTabBarAutoHide(true);
-	_tabWidget.setStyleSheet(R"(
-		QTabBar::tab {
-			border: 1px solid rgba(255, 255, 255, 50);
-			color: rgba(255, 255, 255, 50);
-			font: 13pt bold;
-			min-height: 50px;
-			min-width: 100px;
-			margin-left:5px;
-			margin-right:5px;
-		}
-
-		QTabWidget::pane {
-			border: none;
-			margin:5px;
-			margin-top:30px;
-			background: rgb(161, 161, 161);
-		}
-
-		QTabBar::tab::selected {
-			background: rgb(161, 161, 161);
-			color: white;
-		}
-	)");
 
 	// Intall event filter to lock tab selection
 	_tabWidget.tabBar()->installEventFilter(this);
@@ -65,30 +44,75 @@ bool StepperWidget::eventFilter(QObject* watched, QEvent* event)
 	return QWidget::eventFilter(watched, event);
 }
 
+void StepperWidget::startProcessing()
+{
+	auto const firstTabWidgetIndex{ 0 };
+	auto* stepWidget = static_cast<StepWidget*>(_tabWidget.widget(firstTabWidgetIndex));
+	assert(stepWidget && "StepWidget must always be valid here");
+	stepWidget->startProcessing();
+	_tabWidget.setCurrentIndex(firstTabWidgetIndex);
+}
+
+void StepperWidget::stopProcessing()
+{
+	for (auto i = 0; i < _tabWidget.count(); ++i)
+	{
+		auto* stepWidget = static_cast<StepWidget*>(_tabWidget.widget(i));
+		stepWidget->stopProcessing();
+	}
+}
+
 void StepperWidget::clear()
 {
+	_durations.clear();
 	_tabWidget.clear();
 }
 
-void StepperWidget::addStep(StepWidget* widget)
+void StepperWidget::addStep(StepWidget* widget, std::uint32_t const duration)
 {
-	connect(widget, &StepWidget::next, this, [this]
+	auto computeAndEmitProgress = [this](auto const newTabIndex)
+	{
+		auto const durationsTotal = std::accumulate(std::begin(_durations), std::end(_durations), 0.0);
+		auto const durationsDone = std::accumulate(std::begin(_durations), std::begin(_durations) + newTabIndex, 0.0);
+		auto const ratio = durationsDone / durationsTotal;
+		emit progressed(ratio);
+	};
+
+	connect(widget, &StepWidget::next, this, [this, computeAndEmitProgress]
 	{
 		if (_tabWidget.currentIndex() == _tabWidget.count() - 1)
 			emit ended();
 		else
-			_tabWidget.setCurrentIndex(_tabWidget.currentIndex() + 1);
+		{
+			auto const newTabWidgetIndex{ _tabWidget.currentIndex() + 1 };
+			auto* stepWidget = static_cast<StepWidget*>(_tabWidget.widget(newTabWidgetIndex));
+			stepWidget->startProcessing();
+			_tabWidget.setCurrentIndex(newTabWidgetIndex);
+			computeAndEmitProgress(newTabWidgetIndex);
+		}
 	});
 
-	connect(widget, &StepWidget::previous, this, [this]
+	connect(widget, &StepWidget::previous, this, [this, computeAndEmitProgress]
 	{
 		if (_tabWidget.currentIndex() == 0)
 			emit cancelled();
 		else
-			_tabWidget.setCurrentIndex(_tabWidget.currentIndex() - 1);
+		{
+			auto const newTabWidgetIndex{ _tabWidget.currentIndex() - 1 };
+			auto* stepWidget = static_cast<StepWidget*>(_tabWidget.widget(newTabWidgetIndex));
+			stepWidget->startProcessing();
+			_tabWidget.setCurrentIndex(newTabWidgetIndex);
+			computeAndEmitProgress(newTabWidgetIndex);
+		}
 	});
 
 	_tabWidget.addTab(widget, "Step " + QString::number(_tabWidget.count() + 1));
+	_durations.push_back(duration);
+}
+
+int StepperWidget::count() const
+{
+	return _tabWidget.count();
 }
 
 } // namespace firmwareUpdater::ui::toolkit

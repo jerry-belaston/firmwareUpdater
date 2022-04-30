@@ -2,25 +2,24 @@
 
 Copyright (C) 2022, Jerry Belaston
 
-![image](res/applicationSnapshots.png "Application snapshots")
+<p align="center">
+  <img width="200" height="200" src="https://github.com/jerry-belaston/firmwareUpdater/blob/master/res/upload-hover.png" />
+</p>
 
 ## 💡 Overview
 
-Firmware Updater is a C++ Qt application simulating a classical firmware update process based on JSON information coming from a mock server. 
+Firmware Updater is a C++ Qt application simulating firmware update process of mock devices (xml files) based on JSON information coming from a mock server. 
 
 This application has been implemented following [MVPMV architecture](https://docs.microsoft.com/en-us/archive/msdn-magazine/2011/december/mvpvm-design-pattern-the-model-view-presenter-viewmodel-design-pattern-for-wpf) approach. It demonstrates by the way the responsiveness of the Qt GUI regarding thread notifications.
 
-Here a non-exhaustive list of the main implemented features:
-- The mock server is a simple thread which watches the application executable directory every 2 sec for JSON templates file change.
-- A template (from JSON templates file) is considered valid if it contains at least one step.
-- Only when starting, the application saves a default JSON templates file closed to the application executable if no one exists.
-- Welcome Screen 1 only show a Start button enabled only if at least one template is valid. Clicking on the button redirects to Screen 2.
-- Template Browser Screen 2 allows to choose between the different templates retrieved from the mock server. Clicking on a template redirects to Screen 3.
-- Stepper Screen 3 displays the update process and steps info containing in the template. The first previous button and the last next one redirects to Screen 2. Note that if the template contain only one step, the step bar is not displayed.
+This application offers two modes:
+- Single: one device at a time can be updated.
+- Multi: several devices can be simultaneously updated.
 
-If any change occurs in the JSON templates file:
-- we fallback to Screen 1, with the Start button disabled, if there is no valid template anymore.
-- we fallback to Screen 2 if we were in Screen 3.
+Note that default JSON templates and XML devices files are located close to the application executable (into into firmwareUpdater.app/Contents/MacOS on MacOS)
+
+Let you discover! Have fun :wink:
+
 
 ## 🔑 License
 
