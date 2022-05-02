@@ -8,6 +8,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 ## [2.0.0] - 2022-04-30
 ### Added
 - Refactor the whole application to manage multiple parallel devices update
+- Update minimum requirements (Qt 6.2.4 and Mojave 10.14)
 
 ## [1.0.2] - 2022-04-22
 ### Added
