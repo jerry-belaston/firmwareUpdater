@@ -2,7 +2,8 @@
 
 Prerequisite: 
 - The project uses C++20 features, therefore make sure the version of your chosen compiler, no matter the platform, support it.
-- The project currently requires at least the version 5.15.2 of Qt.
+- The project currently requires at least the version 6.2.4 of Qt.
+- The project requires at least Windows 10 or MacOS 10.14 (Mojave) target platforms.
 
 ## Windows with Visual Studio
 
